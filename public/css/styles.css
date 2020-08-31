@@ -1,28 +1,85 @@
 body{
     color: #333333;
     font-family: arial;
-    max-width: 650px;
+    max-width: 750px;
     margin: 0 auto;
     padding: 0 16px;
-
     display: flex;
     flex-direction: column;
    min-height: 60vh
 }
 
-.main-content{
-    flex-grow:1;
+.main-content-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.title-cities-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.cities-container {
+    display: flex;
+    justify-content: space-evenly;
+    margin-left: 30px;
+}
+
+.city-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #f0f7fd;
+    border-left: 4px solid #c3d3e0;
+    border-bottom: 4px solid #c3d3e0;
+    height: 160px;
+    margin-left: 30px;
+    width: 200px;
+}
+
+.searchbar-container{
+    margin-bottom: 20px;
+}
+
+.links-container{
+    margin-top:20px;
+    width:300px
+}
+
+.city-weather-data {
+    display: flex;
+    flex-direction: column;
+}
+
+.weather-data-row {
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+.first-row {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 10px;
+}
+
+.title-searchbar-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.searchbar {
+    display: flex;
 }
 
 footer{
     color: #888888;
     border-top: 1px solid #eeeeee;
-    margin-top: 16px;
+    margin-top: 12%;
     padding: 16px 0;
 }
+
 header{
     margin-top: 16px;
-    margin-bottom: 48px;
+    margin-bottom: 16px;
 }
 
 h1{

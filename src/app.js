@@ -2,7 +2,7 @@ const path = require('path')
 const express = require('express')
 const hbs = require('hbs')
 const geocode = require('./utils/geocode')
-const forecast = require('./utils/forecast')
+const { request } = require('http')
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -19,66 +19,50 @@ hbs.registerPartials(partialsPath)
 
 // Setup static diractory to serve
 app.use(express.static(publicDirectionPath))
-
-app.get('', (req, res) => {
-    res.render('index', {
-        title: 'Weather App',
-        name: 'Eden Binyamin'
+app.get('', async (req, res)=>{
+    firstMainCityforecastData = await geocode('tel-aviv, israel')
+    secondMainCityForcastData = await geocode('new-york, usa')
+    res.render('index',{
+        firstMainCityName: firstMainCityforecastData.name,
+        firstMainCityHumidity: firstMainCityforecastData.humadity,
+        firstMainCityWindSpeed: firstMainCityforecastData.windSpeed,
+        firstMainCityWeather: firstMainCityforecastData.weather,
+        firstMainCityIconWeather: firstMainCityforecastData.iconWeather,
+        secondMainCityName: secondMainCityForcastData.name,
+        secondMainCityHumidity: secondMainCityForcastData.humadity,
+        secondMainCityWindSpeed: secondMainCityForcastData.windSpeed,
+        secondMainCityWeather: secondMainCityForcastData.weather,
+        secondMainCityIconWeather: secondMainCityForcastData.iconWeather
     })
 })
 
-app.get('/about', (req, res) => {
-    res.render('about', {
-        title: 'About Me',
-        name: 'Eden Binyamin'
-    })
-})
-
-app.get('/help', (req, res) => {
-    res.render('help', {
-        title: 'Help',
-        name: 'Eden Binyamin'
-    })
-})
-
-app.get('/weather', (req, res) => {
+app.get('/weather', async (req, res) => {
     address = req.query.address
-    if (!address) {
+    forecastData = await geocode(address)
+    if(forecastData.error)
+    {
+        return res.send({
+            error: forecastData.error.substring(0,14) + '. Please try writing the address in a city, country form.'
+        })
+    }
+    if(address === ','){
         return res.send({
             error: 'You must provide an address!'
         })
     }
-    geocode(address, (error, { latitude, longitude, location } = {}) => {
-        if (error)
-            return res.send({ error })
-        forecast(latitude, longitude, (error, forecastData) => {
-            if (error)
-                return res.send({ error })
-            res.send({
-                forecast: forecastData,
-                location,
-                address
-            })
-        })
-    })
-})
-
-
-app.get('/products', (req, res) => {
-    if (!req.query.search) {
-        return res.send({
-            error: 'You must provide search term'
-        })
-    }
-    console.log(req.query.search)
-    res.send({
-        products: []
-    })
-})
-
-app.get('/help/*', (req, res) => {
-    res.render('error', {
-        errorMessage: 'Help artictle was not found'
+    return res.send({
+        name: forecastData.name,
+        humidity: forecastData.humadity,
+        windSpeed: forecastData.windSpeed,
+        temperature: forecastData.weather,
+        iconWeather: forecastData.iconWeather,
+        firstLink: forecastData.firstLink,
+        firstLinkName: forecastData.firstLinkName,
+        secondLink: forecastData.secondLink,
+        secondLinkName: forecastData.secondLinkName,
+        thirdLink: forecastData.thirdLink,
+        thirdLinkName: forecastData.thirdLinkName,
+        citiesNearByMessage: forecastData.citiesNearByMessage
     })
 })
 
@@ -89,5 +73,4 @@ app.get('*', (req, res) => {
 })
 
 app.listen(port, () => {
-    console.log('Server is up on ' + port +'.')
 })
